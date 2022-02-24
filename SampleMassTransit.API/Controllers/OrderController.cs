@@ -29,7 +29,7 @@
         [HttpPost]
         public async Task<IActionResult> Post(Guid id, string customerNumber)
         {
-            var (accepted, rejected) = await _requestClient
+            var response = await _requestClient
                 .GetResponse<IOrderSubmissionAccepted, IOrderSubmissionRejected>(new
                 {
                     OrderId = id,
@@ -37,17 +37,19 @@
                     CustomerNumber = customerNumber
                 });
 
-            if (accepted.IsCompletedSuccessfully)
+            if (response.Is(out Response<IOrderSubmissionAccepted> responseA))
             {
-                var response = await accepted;
-                return Ok(response.Message);
+                var result = responseA.Message;
+                return Accepted(result);
             }
 
-            else
+            if(response.Is(out Response<IOrderSubmissionRejected> responseB))
             {
-                var response = await rejected;
-                return BadRequest(response.Message);
+                var result = responseB.Message;
+                return BadRequest(result);
             }
+
+            return Problem();
         }
     }
 }
