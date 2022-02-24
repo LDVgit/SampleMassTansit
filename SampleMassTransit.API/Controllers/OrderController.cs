@@ -17,6 +17,8 @@
         private readonly ILogger<OrderController> _logger;
 
         private readonly IRequestClient<ISubmitOrder> _requestClient;
+        //private readonly IPublishEndpoint _publishEndpoint;
+        //private readonly ISendEndpointProvider _sendEndpointProvider;
 
         public OrderController(
             ILogger<OrderController> logger,

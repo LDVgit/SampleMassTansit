@@ -31,23 +31,22 @@
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    var rabbitMqOption = hostContext.Configuration
+                        .GetSection("RabbitMqOption")
+                        .Get<RabbitMqOption>();
+                    
                     services.AddMassTransit(cfg =>
                     { 
                         cfg.SetKebabCaseEndpointNameFormatter();
                         cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
                         cfg.UsingRabbitMq((context, config) =>
                         {
-                            var massTransitSection = hostContext.Configuration.GetSection("RabbitMq");
-                            var virtualHost = massTransitSection.GetValue<string>("VirtualHost");
-                            var host = massTransitSection.GetValue<string>("HostAddress");
-                            var userName = massTransitSection.GetValue<string>("Username");
-                            var password = massTransitSection.GetValue<string>("Password");
-                            var port = massTransitSection.GetValue<ushort>("Port");
-
-                            config.Host(host, port, virtualHost, c =>
+                            config.Host(rabbitMqOption.HostAddress, 
+                                rabbitMqOption.Port, 
+                                rabbitMqOption.VirtualHost, c =>
                             {
-                                c.Username(userName);
-                                c.Password(password);
+                                c.Username(rabbitMqOption.Username);
+                                c.Password(rabbitMqOption.Password);
                             });
 
                             config.ConfigureEndpoints(context);
