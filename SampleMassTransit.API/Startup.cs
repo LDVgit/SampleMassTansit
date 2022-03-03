@@ -29,15 +29,6 @@ namespace SampleMassTransit.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*//InMemory
-             services.AddMediator(cfg =>
-            {
-                cfg.AddConsumer<SubmitOrderConsumer>();
-                cfg.AddRequestClient<ISubmitOrder>();
-            });*/
-            
-           // services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
-            
             services.AddMassTransit(cfg =>
             {
                 var rabbitMqOption = Configuration.GetSection("RabbitMqOption")
@@ -57,8 +48,6 @@ namespace SampleMassTransit.API
                            
                     config.ConfigureEndpoints(context);
                 });
-                
-                
                 
                 cfg.AddRequestClient<ISubmitOrder>();
             });
