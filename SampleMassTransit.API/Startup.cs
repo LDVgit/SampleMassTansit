@@ -1,11 +1,8 @@
 namespace SampleMassTransit.API
 {
-    using Components;
-
     using Contracts;
 
     using MassTransit;
-    using MassTransit.Definition;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -13,9 +10,6 @@ namespace SampleMassTransit.API
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.OpenApi.Models;
-    using MassTransit.Mediator;
-
-    using Microsoft.Extensions.DependencyInjection.Extensions;
 
     public class Startup
     {
@@ -29,46 +23,36 @@ namespace SampleMassTransit.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*//InMemory
-             services.AddMediator(cfg =>
-            {
-                cfg.AddConsumer<SubmitOrderConsumer>();
-                cfg.AddRequestClient<ISubmitOrder>();
-            });*/
-            
-           // services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
-            
             services.AddMassTransit(cfg =>
             {
                 var rabbitMqOption = Configuration.GetSection("RabbitMqOption")
                     .Get<RabbitMqOption>();
-                
+
                 cfg.SetKebabCaseEndpointNameFormatter();
-                cfg.UsingRabbitMq((context, config) => 
+                cfg.UsingRabbitMq((context, config) =>
                 {
-                            
-                    config.Host(rabbitMqOption.HostAddress, 
-                        rabbitMqOption.Port, 
+                    config.Host(rabbitMqOption.HostAddress,
+                        rabbitMqOption.Port,
                         rabbitMqOption.VirtualHost, c =>
                         {
                             c.Username(rabbitMqOption.Username);
                             c.Password(rabbitMqOption.Password);
                         });
-                           
+
                     config.ConfigureEndpoints(context);
                 });
-                
-                
-                
+
+
                 cfg.AddRequestClient<ISubmitOrder>();
+                cfg.AddRequestClient<ICheckOrder>();
             });
-            
+
             /*
              * Нжуен при создании шины для ее контроля. Фоновый сервис MassTransit
              */
             services.AddMassTransitHostedService();
 
-            
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

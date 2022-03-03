@@ -44,7 +44,7 @@
                     services.AddMassTransit(cfg =>
                     {
                         cfg.SetKebabCaseEndpointNameFormatter();
-                        
+
                         cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
 
                         cfg.AddSagaStateMachine<OrderStateMachine, OrderState>()
@@ -52,20 +52,21 @@
                             {
                                 r.ConcurrencyMode =
                                     ConcurrencyMode.Pessimistic; // or use Optimistic, which requires RowVersion
-                                
+
                                 r.LockStatementProvider = new PostgresLockStatementProvider();
 
                                 r.AddDbContext<DbContext, OrderStateDbContext>((provider, builder) =>
                                 {
                                     builder.UseNpgsql(
-                                        hostContext.Configuration.GetConnectionString("DefaultConnection"), m =>
+                                        hostContext.Configuration.GetConnectionString("DefaultConnection"),
+                                        m =>
                                         {
                                             m.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
                                             m.MigrationsHistoryTable($"__{nameof (OrderStateDbContext)}");
                                         });
                                 });
                             });
-                        
+
                         cfg.UsingRabbitMq((context, config) =>
                         {
                             config.Host(rabbitMqOption.HostAddress,
