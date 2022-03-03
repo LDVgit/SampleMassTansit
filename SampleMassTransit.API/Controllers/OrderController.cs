@@ -1,4 +1,6 @@
-﻿namespace SampleMassTransit.API.Controllers
+﻿using MassTransit.RabbitMqTransport.Integration;
+
+namespace SampleMassTransit.API.Controllers
 {
     using System;
     using System.Threading.Tasks;
@@ -41,7 +43,7 @@
             if (response.Is(out Response<IOrderStatus> accepted))
             {
                 var result = accepted.Message;
-                return Ok(accepted.Message);
+                return Ok(result);
             }
              
             if(response.Is(out Response<IOrderNotFound> notFound))

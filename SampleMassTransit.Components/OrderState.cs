@@ -7,7 +7,7 @@ namespace SampleMassTransit.Components
     public class OrderState :
         SagaStateMachineInstance
     {
-        /// Идентификатор эеземпляра машины состояния сага
+        /// Идентификатор экземпляра машины состояния сага
         public Guid CorrelationId { get; set; }
 
         public string CurrentState { get; set; }
