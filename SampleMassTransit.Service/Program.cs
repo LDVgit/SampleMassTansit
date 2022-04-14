@@ -47,7 +47,7 @@
 
                         cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
 
-                        cfg.AddSagaStateMachine<OrderStateMachine, OrderState>()
+                        cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                             .EntityFrameworkRepository(r =>
                             {
                                 r.ConcurrencyMode =
